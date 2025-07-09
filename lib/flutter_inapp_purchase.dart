@@ -18,7 +18,7 @@ enum _TypeInApp { inapp, subs }
 
 class FlutterInappPurchase {
   static FlutterInappPurchase instance =
-      FlutterInappPurchase(FlutterInappPurchase.private(const LocalPlatform()));
+  FlutterInappPurchase(FlutterInappPurchase.private(const LocalPlatform()));
 
   static StreamController<PurchasedItem?>? _purchaseController;
 
@@ -109,12 +109,12 @@ class FlutterInappPurchase {
   Future<bool> manageSubscription(String sku, String packageName) async {
     if (_platform.isAndroid) {
       return (await _channel.invokeMethod<bool?>(
-            'manageSubscription',
-            <String, dynamic>{
-              'sku': sku,
-              'packageName': packageName,
-            },
-          )) ??
+        'manageSubscription',
+        <String, dynamic>{
+          'sku': sku,
+          'packageName': packageName,
+        },
+      )) ??
           false;
     }
     throw PlatformException(
@@ -124,7 +124,7 @@ class FlutterInappPurchase {
   Future<bool> openPlayStoreSubscriptions() async {
     if (_platform.isAndroid) {
       return (await _channel
-              .invokeMethod<bool?>('openPlayStoreSubscriptions')) ??
+          .invokeMethod<bool?>('openPlayStoreSubscriptions')) ??
           false;
     }
     throw PlatformException(
@@ -265,20 +265,20 @@ class FlutterInappPurchase {
   /// Request a purchase on `Android` or `iOS`.
   /// Result will be received in `purchaseUpdated` listener or `purchaseError` listener.
   ///
-  /// Check [AndroidProrationMode] for valid proration values
+  /// Check [AndroidReplacementMode] for valid values
   /// Identical to [requestSubscription] on `iOS`.
   /// [purchaseTokenAndroid] is used when upgrading subscriptions and sets the old purchase token
   /// [offerTokenIndex] is now required for billing 5.0, if upgraded from billing 4.0 this will default to 0
   Future requestPurchase(String productId,
       {String? obfuscatedAccountId,
-      String? purchaseTokenAndroid,
-      String? obfuscatedProfileIdAndroid,
-      int? offerTokenIndex}) async {
+        String? purchaseTokenAndroid,
+        String? obfuscatedProfileIdAndroid,
+        int? offerTokenIndex}) async {
     if (_platform.isAndroid) {
       return await _channel.invokeMethod('buyItemByType', <String, dynamic>{
         'type': _TypeInApp.inapp.name,
         'productId': productId,
-        'prorationMode': -1,
+        'replacementMode': -1,
         'obfuscatedAccountId': obfuscatedAccountId,
         'obfuscatedProfileId': obfuscatedProfileIdAndroid,
         'purchaseToken': purchaseTokenAndroid,
@@ -299,23 +299,23 @@ class FlutterInappPurchase {
   ///
   /// **NOTICE** second parameter is required on `Android`.
   ///
-  /// Check [AndroidProrationMode] for valid proration values
+  /// Check [https://developer.android.com/reference/com/android/billingclient/api/BillingFlowParams.SubscriptionUpdateParams.ReplacementMode] for valid values
   /// Identical to [requestPurchase] on `iOS`.
   /// [purchaseTokenAndroid] is used when upgrading subscriptions and sets the old purchase token
   /// [offerTokenIndex] is now required for billing 5.0, if upgraded from billing 4.0 this will default to 0
   Future requestSubscription(
-    String productId, {
-    int? prorationModeAndroid,
-    String? obfuscatedAccountIdAndroid,
-    String? obfuscatedProfileIdAndroid,
-    String? purchaseTokenAndroid,
-    int? offerTokenIndex,
-  }) async {
+      String productId, {
+        int? replacementModeAndroid,
+        String? obfuscatedAccountIdAndroid,
+        String? obfuscatedProfileIdAndroid,
+        String? purchaseTokenAndroid,
+        int? offerTokenIndex,
+      }) async {
     if (_platform.isAndroid) {
       return await _channel.invokeMethod('buyItemByType', <String, dynamic>{
         'type': _TypeInApp.subs.name,
         'productId': productId,
-        'prorationMode': prorationModeAndroid ?? -1,
+        'replacementMode': replacementModeAndroid ?? -1,
         'obfuscatedAccountId': obfuscatedAccountIdAndroid,
         'obfuscatedProfileId': obfuscatedProfileIdAndroid,
         'purchaseToken': purchaseTokenAndroid,
@@ -357,10 +357,10 @@ class FlutterInappPurchase {
   ///
   /// @returns {Future} will receive result from `purchaseUpdated` listener.
   Future requestProductWithOfferIOS(
-    String sku,
-    String forUser,
-    Map<String, dynamic> withOffer,
-  ) async {
+      String sku,
+      String forUser,
+      Map<String, dynamic> withOffer,
+      ) async {
     if (_platform.isIOS) {
       return await _channel
           .invokeMethod('requestProductWithOfferIOS', <String, dynamic>{
@@ -377,9 +377,9 @@ class FlutterInappPurchase {
   ///
   /// @returns {Future} will receive result from `purchaseUpdated` listener.
   Future requestPurchaseWithQuantityIOS(
-    String sku,
-    int quantity,
-  ) async {
+      String sku,
+      int quantity,
+      ) async {
     if (_platform.isIOS) {
       return await _channel
           .invokeMethod('requestProductWithQuantityIOS', <String, dynamic>{
@@ -528,7 +528,7 @@ class FlutterInappPurchase {
       return <IAPItem>[];
     } else if (_platform.isIOS) {
       dynamic result =
-          await _channel.invokeMethod('getAppStoreInitiatedProducts');
+      await _channel.invokeMethod('getAppStoreInitiatedProducts');
 
       return extractItems(json.encode(result));
     }
@@ -555,7 +555,7 @@ class FlutterInappPurchase {
 
       for (var purchase in history) {
         Duration difference =
-            DateTime.now().difference(purchase.transactionDate!);
+        DateTime.now().difference(purchase.transactionDate!);
         if (difference.inMinutes <= (duration + grace).inMinutes &&
             purchase.productId == sku) return true;
       }
@@ -691,30 +691,25 @@ class FlutterInappPurchase {
         code: _platform.operatingSystem, message: "platform not supported");
   }
 }
+/// A list of valid values for ReplacementMode parameter
+/// Check [https://developer.android.com/reference/com/android/billingclient/api/BillingFlowParams.SubscriptionUpdateParams.ReplacementMode] for valid values
+class AndroidReplacementMode {
 
-/// A list of valid values for ProrationMode parameter
-/// https://developer.android.com/reference/com/android/billingclient/api/BillingFlowParams.ProrationMode
-class AndroidProrationMode {
-  /// Replacement takes effect immediately, and the user is charged full price of new plan and is given a full billing cycle of subscription, plus remaining prorated time from the old plan.
-  /// https://developer.android.com/reference/com/android/billingclient/api/BillingFlowParams.ProrationMode#IMMEDIATE_AND_CHARGE_FULL_PRICE
-  static const int IMMEDIATE_AND_CHARGE_FULL_PRICE = 5;
+  /// The new plan takes effect immediately, and the user is charged the full price of the new plan and is given a full billing cycle of the subscription, plus remaining prorated time from the old plan.
+  static const int CHARGE_FULL_PRICE = 5;
 
-  /// Replacement takes effect when the old plan expires, and the new price will be charged at the same time.
-  /// https://developer.android.com/reference/com/android/billingclient/api/BillingFlowParams.ProrationMode#DEFERRED
-  static const int DEFERRED = 4;
+  /// The new plan takes effect immediately, and the user is charged the prorated price of the new plan. The billing cycle remains the same.
+  static const int CHARGE_PRORATED_PRICE = 2;
 
-  /// Replacement takes effect immediately, and the billing cycle remains the same. The price for the remaining period will be charged. This option is only available for subscription upgrade.
-  /// https://developer.android.com/reference/com/android/billingclient/api/BillingFlowParams.ProrationMode#immediate_and_charge_prorated_price
-  static const int IMMEDIATE_AND_CHARGE_PRORATED_PRICE = 2;
+  /// The new purchase takes effect immediately, but the new plan will take effect when the old item expires.
+  static const int DEFERRED = 6;
 
-  /// Replacement takes effect immediately, and the new price will be charged on next recurrence time. The billing cycle stays the same.
-  /// https://developer.android.com/reference/com/android/billingclient/api/BillingFlowParams.ProrationMode#immediate_without_proration
-  static const int IMMEDIATE_WITHOUT_PRORATION = 3;
+  /// Unknown replacement mode. This is typically used when the mode is not explicitly defined.
+  static const int UNKNOWN_REPLACEMENT_MODE = 0;
 
-  /// Replacement takes effect immediately, and the remaining time will be prorated and credited to the user. This is the current default behavior.
-  /// https://developer.android.com/reference/com/android/billingclient/api/BillingFlowParams.ProrationMode#immediate_with_time_proration
-  static const int IMMEDIATE_WITH_TIME_PRORATION = 1;
+  /// The new plan takes effect immediately, but the new price will be charged at the next recurrence time. The billing cycle stays the same.
+  static const int WITHOUT_PRORATION = 3;
 
-  /// https://developer.android.com/reference/com/android/billingclient/api/BillingFlowParams.ProrationMode#unknown_subscription_upgrade_downgrade_policy
-  static const int UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY = 0;
+  /// The new plan takes effect immediately, and the remaining time from the old plan will be prorated and credited to the user.
+  static const int WITH_TIME_PRORATION = 1;
 }

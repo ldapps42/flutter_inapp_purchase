@@ -36,7 +36,7 @@ void main() {
 
         test('returns correct result', () async {
           final result =
-              await FlutterInappPurchase.instance.showInAppMessageAndroid();
+          await FlutterInappPurchase.instance.showInAppMessageAndroid();
           expect(result, "ready");
         });
       });
@@ -222,11 +222,11 @@ void main() {
 
         test('returns correct result', () async {
           List<IAPItem> products =
-              await FlutterInappPurchase.instance.getProducts(productIds);
+          await FlutterInappPurchase.instance.getProducts(productIds);
           List<IAPItem> expected = (json.decode(result) as List)
               .map<IAPItem>(
                 (product) => IAPItem.fromJSON(product as Map<String, dynamic>),
-              )
+          )
               .toList();
           for (var i = 0; i < products.length; ++i) {
             var product = products[i];
@@ -318,11 +318,11 @@ void main() {
 
         test('returns correct result', () async {
           List<IAPItem> products =
-              await FlutterInappPurchase.instance.getProducts(skus);
+          await FlutterInappPurchase.instance.getProducts(skus);
           List<IAPItem>? expected = result
               .map<IAPItem>(
                 (product) => IAPItem.fromJSON(product as Map<String, dynamic>),
-              )
+          )
               .toList();
           for (var i = 0; i < products.length; ++i) {
             var product = products[i];
@@ -410,11 +410,11 @@ void main() {
         });
         test('returns correct result', () async {
           List<IAPItem> products =
-              await FlutterInappPurchase.instance.getSubscriptions(productIds);
+          await FlutterInappPurchase.instance.getSubscriptions(productIds);
           List<IAPItem> expected = (json.decode(result) as List)
               .map<IAPItem>(
                 (product) => IAPItem.fromJSON(product as Map<String, dynamic>),
-              )
+          )
               .toList();
           for (var i = 0; i < products.length; ++i) {
             var product = products[i];
@@ -501,11 +501,11 @@ void main() {
 
         test('returns correct result', () async {
           List<IAPItem> products =
-              await FlutterInappPurchase.instance.getSubscriptions(skus);
+          await FlutterInappPurchase.instance.getSubscriptions(skus);
           List<IAPItem>? expected = result
               .map<IAPItem>(
                 (product) => IAPItem.fromJSON(product as Map<String, dynamic>),
-              )
+          )
               .toList();
           for (var i = 0; i < products.length; ++i) {
             var product = products[i];
@@ -613,7 +613,7 @@ void main() {
           List<PurchasedItem>? actualList =
               await (FlutterInappPurchase.instance.getPurchaseHistory()) ?? [];
           List<PurchasedItem> expectList = ((json.decode(resultInapp) as List) +
-                  (json.decode(resultSubs) as List))
+              (json.decode(resultSubs) as List))
               .map((item) => PurchasedItem.fromJSON(item))
               .toList();
 
@@ -652,7 +652,7 @@ void main() {
             "signatureAndroid": "testSignatureAndroid",
             "originalTransactionDateIOS": "1552831136000",
             "originalTransactionIdentifierIOS":
-                "testOriginalTransactionIdentifierIOS"
+            "testOriginalTransactionIdentifierIOS"
           },
           {
             "transactionDate": "1552824902000",
@@ -665,7 +665,7 @@ void main() {
             "signatureAndroid": "testSubsSignatureAndroid",
             "originalTransactionDateIOS": "1552831136000",
             "originalTransactionIdentifierIOS":
-                "testSubsOriginalTransactionIdentifierIOS"
+            "testSubsOriginalTransactionIdentifierIOS"
           }
         ];
 
@@ -796,7 +796,7 @@ void main() {
               await (FlutterInappPurchase.instance.getAvailablePurchases()) ??
                   [];
           List<PurchasedItem> expectList = ((json.decode(resultInapp) as List) +
-                  (json.decode(resultSubs) as List))
+              (json.decode(resultSubs) as List))
               .map((item) => PurchasedItem.fromJSON(item))
               .toList();
 
@@ -835,7 +835,7 @@ void main() {
             "signatureAndroid": "testSignatureAndroid",
             "originalTransactionDateIOS": "1552831136000",
             "originalTransactionIdentifierIOS":
-                "testOriginalTransactionIdentifierIOS"
+            "testOriginalTransactionIdentifierIOS"
           },
           {
             "transactionDate": "1552824902000",
@@ -848,7 +848,7 @@ void main() {
             "signatureAndroid": "testSubsSignatureAndroid",
             "originalTransactionDateIOS": "1552831136000",
             "originalTransactionIdentifierIOS":
-                "testSubsOriginalTransactionIdentifierIOS"
+            "testSubsOriginalTransactionIdentifierIOS"
           }
         ];
 
@@ -883,7 +883,7 @@ void main() {
                   [];
           List<PurchasedItem>? expectList = result
               .map<PurchasedItem>((item) =>
-                  PurchasedItem.fromJSON(item as Map<String, dynamic>))
+              PurchasedItem.fromJSON(item as Map<String, dynamic>))
               .toList();
 
           for (var i = 0; i < actualList.length; ++i) {
@@ -1008,7 +1008,7 @@ void main() {
               arguments: <String, dynamic>{
                 'type': 'inapp',
                 'productId': productId,
-                'prorationMode': -1,
+                'replacementMode': -1,
                 'obfuscatedAccountId': null,
                 'obfuscatedProfileId': null,
                 'purchaseToken': null,
@@ -1068,7 +1068,7 @@ void main() {
               arguments: <String, dynamic>{
                 'type': 'subs',
                 'productId': productId,
-                'prorationMode': -1,
+                'replacementMode': -1,
                 'obfuscatedAccountId': null,
                 'obfuscatedProfileId': null,
                 'purchaseToken': null,
@@ -1377,7 +1377,7 @@ void main() {
           List<IAPItem>? expected = result
               .map<IAPItem>(
                 (product) => IAPItem.fromJSON(product as Map<String, dynamic>),
-              )
+          )
               .toList();
           for (var i = 0; i < products.length; ++i) {
             var product = products[i];
@@ -1427,39 +1427,39 @@ void main() {
       });
 
       test('returns correct http request url, isSubscription is true',
-          () async {
-        final String packageName = "testpackege";
-        final String productId = "testProductId";
-        final String productToken = "testProductToken";
-        final String accessToken = "testAccessToken";
-        final String type = "subscriptions";
-        final response = await FlutterInappPurchase.instance
-            .validateReceiptAndroid(
+              () async {
+            final String packageName = "testpackege";
+            final String productId = "testProductId";
+            final String productToken = "testProductToken";
+            final String accessToken = "testAccessToken";
+            final String type = "subscriptions";
+            final response = await FlutterInappPurchase.instance
+                .validateReceiptAndroid(
                 packageName: packageName,
                 productId: productId,
                 productToken: productToken,
                 accessToken: accessToken,
                 isSubscription: true);
-        expect(response.request!.url.toString(),
-            "https://www.googleapis.com/androidpublisher/v3/applications/$packageName/purchases/$type/$productId/tokens/$productToken?access_token=$accessToken");
-      });
+            expect(response.request!.url.toString(),
+                "https://www.googleapis.com/androidpublisher/v3/applications/$packageName/purchases/$type/$productId/tokens/$productToken?access_token=$accessToken");
+          });
       test('returns correct http request url, isSubscription is false',
-          () async {
-        final String packageName = "testpackege";
-        final String productId = "testProductId";
-        final String productToken = "testProductToken";
-        final String accessToken = "testAccessToken";
-        final String type = "products";
-        final response = await FlutterInappPurchase.instance
-            .validateReceiptAndroid(
+              () async {
+            final String packageName = "testpackege";
+            final String productId = "testProductId";
+            final String productToken = "testProductToken";
+            final String accessToken = "testAccessToken";
+            final String type = "products";
+            final response = await FlutterInappPurchase.instance
+                .validateReceiptAndroid(
                 packageName: packageName,
                 productId: productId,
                 productToken: productToken,
                 accessToken: accessToken,
                 isSubscription: false);
-        expect(response.request!.url.toString(),
-            "https://www.googleapis.com/androidpublisher/v3/applications/$packageName/purchases/$type/$productId/tokens/$productToken?access_token=$accessToken");
-      });
+            expect(response.request!.url.toString(),
+                "https://www.googleapis.com/androidpublisher/v3/applications/$packageName/purchases/$type/$productId/tokens/$productToken?access_token=$accessToken");
+          });
     });
 
     group('validateReceiptIos', () {

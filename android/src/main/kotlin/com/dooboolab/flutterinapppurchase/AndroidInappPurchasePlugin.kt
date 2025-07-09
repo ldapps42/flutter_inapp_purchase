@@ -78,29 +78,29 @@ class AndroidInappPurchasePlugin internal constructor() : MethodCallHandler,
                 safeChannel.success("Already started. Call endConnection method if you want to start over.")
                 return
             }
-            
+
             billingClient = BillingClient.newBuilder(context ?: return).apply {
                 setListener(purchasesUpdatedListener)
                 enablePendingPurchases()
             }.build()
-            
+
             billingClient?.startConnection(object : BillingClientStateListener {
                 private var alreadyFinished = false
-            
+
                 override fun onBillingSetupFinished(billingResult: BillingResult) {
                     if (alreadyFinished) return
                     alreadyFinished = true
-            
+
                     try {
                         val isConnected = billingResult.responseCode == BillingClient.BillingResponseCode.OK
                         updateConnectionStatus(isConnected)
-            
+
                         val resultMessage = if (isConnected) {
                             "Billing client ready"
                         } else {
                             "responseCode: ${billingResult.responseCode}"
                         }
-            
+
                         if (isConnected) {
                             safeChannel.success(resultMessage)
                         } else {
@@ -110,13 +110,13 @@ class AndroidInappPurchasePlugin internal constructor() : MethodCallHandler,
                         je.printStackTrace()
                     }
                 }
-            
+
                 override fun onBillingServiceDisconnected() {
                     if (alreadyFinished) return
                     alreadyFinished = true
                     updateConnectionStatus(false)
                 }
-            
+
                 private fun updateConnectionStatus(isConnected: Boolean) {
                     try {
                         val item = JSONObject().apply {
@@ -448,7 +448,7 @@ class AndroidInappPurchasePlugin internal constructor() : MethodCallHandler,
                     } else if (productDetails.productType == BillingClient.ProductType.SUBS) {
                         // These generalized values are derived from the first pricing object, mainly for backwards compatibility
                         // It would be better to use the actual objects in PricingPhases and SubscriptionOffers
-    
+
                         // Get first subscription offer
                         val firstProductInfo = productDetails.subscriptionOfferDetails?.find { offer -> offer.offerId == null }
                         if (firstProductInfo != null && firstProductInfo.pricingPhases.pricingPhaseList[0] != null) {
@@ -458,7 +458,7 @@ class AndroidInappPurchasePlugin internal constructor() : MethodCallHandler,
                             item.put("localizedPrice", defaultPricingPhase.formattedPrice)
                             item.put("subscriptionPeriodAndroid", defaultPricingPhase.billingPeriod)
                         }
-    
+
                         val subs = JSONArray()
                         if (productDetails.subscriptionOfferDetails != null ) {
                             for (offer in productDetails.subscriptionOfferDetails!!) {
@@ -507,7 +507,7 @@ class AndroidInappPurchasePlugin internal constructor() : MethodCallHandler,
             val obfuscatedAccountId = call.argument<String>("obfuscatedAccountId")
             val obfuscatedProfileId = call.argument<String>("obfuscatedProfileId")
             val productId = call.argument<String>("productId")
-            val prorationMode = call.argument<Int>("prorationMode")!!
+            val replacementMode = call.argument<Int>("replacementMode")
             val purchaseToken = call.argument<String>("purchaseToken")
             val offerTokenIndex = call.argument<Int>("offerTokenIndex")
             val builder = newBuilder()
@@ -537,9 +537,10 @@ class AndroidInappPurchasePlugin internal constructor() : MethodCallHandler,
                 if (offerToken == null) {
                     offerToken = selectedProductDetails.subscriptionOfferDetails!![0].offerToken
                 }
-
-                productDetailsParamsBuilder.setOfferToken(offerToken)
+            } else {
+                offerToken = selectedProductDetails.subscriptionOfferDetails!![0].offerToken
             }
+            productDetailsParamsBuilder.setOfferToken(offerToken)
 
             val productDetailsParamsList = listOf(productDetailsParamsBuilder.build())
 
@@ -554,25 +555,8 @@ class AndroidInappPurchasePlugin internal constructor() : MethodCallHandler,
                 builder.setObfuscatedProfileId(obfuscatedProfileId)
             }
 
-            when (prorationMode) {
-                -1 -> {} //ignore
-                ProrationMode.IMMEDIATE_AND_CHARGE_PRORATED_PRICE -> {
-                    params.setReplaceProrationMode(ProrationMode.IMMEDIATE_AND_CHARGE_PRORATED_PRICE)
-                    if (type != BillingClient.ProductType.SUBS) {
-                        safeChannel.error(
-                            TAG,
-                            "buyItemByType",
-                            "IMMEDIATE_AND_CHARGE_PRORATED_PRICE for proration mode only works in subscription purchase."
-                        )
-                        return
-                    }
-                }
-                ProrationMode.IMMEDIATE_WITHOUT_PRORATION,
-                ProrationMode.DEFERRED,
-                ProrationMode.IMMEDIATE_WITH_TIME_PRORATION,
-                ProrationMode.IMMEDIATE_AND_CHARGE_FULL_PRICE ->
-                    params.setReplaceProrationMode(prorationMode)
-                else -> params.setReplaceProrationMode(ProrationMode.UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY)
+            if (replacementMode != null && replacementMode != -1) {
+                params.setSubscriptionReplacementMode(replacementMode)
             }
 
             if (purchaseToken != null) {

@@ -35,6 +35,8 @@ class IAPItem {
   final List<SubscriptionOfferAndroid>? subscriptionOffersAndroid;
   final String? subscriptionPeriodAndroid;
 
+  final String? freeTrialPeriodAndroid = "default_value";
+
   final String? iconUrl;
   final String? originalJson;
   final String originalPrice;
@@ -49,26 +51,26 @@ class IAPItem {
         description = json['description'] as String?,
         introductoryPrice = json['introductoryPrice'] as String?,
         introductoryPricePaymentModeIOS =
-            json['introductoryPricePaymentModeIOS'] as String?,
+        json['introductoryPricePaymentModeIOS'] as String?,
         introductoryPriceNumberOfPeriodsIOS =
-            json['introductoryPriceNumberOfPeriodsIOS'] as String?,
+        json['introductoryPriceNumberOfPeriodsIOS'] as String?,
         introductoryPriceSubscriptionPeriodIOS =
-            json['introductoryPriceSubscriptionPeriodIOS'] as String?,
+        json['introductoryPriceSubscriptionPeriodIOS'] as String?,
         introductoryPriceNumberIOS =
-            json['introductoryPriceNumberIOS'] as String?,
+        json['introductoryPriceNumberIOS'] as String?,
         subscriptionPeriodNumberIOS =
-            json['subscriptionPeriodNumberIOS'] as String?,
+        json['subscriptionPeriodNumberIOS'] as String?,
         subscriptionPeriodUnitIOS =
-            json['subscriptionPeriodUnitIOS'] as String?,
+        json['subscriptionPeriodUnitIOS'] as String?,
         subscriptionPeriodAndroid =
-            json['subscriptionPeriodAndroid'] as String?,
+        json['subscriptionPeriodAndroid'] as String?,
         signatureAndroid = json['signatureAndroid'] as String?,
         iconUrl = json['iconUrl'] as String?,
         originalJson = json['originalJson'] as String?,
         originalPrice = json['originalPrice'].toString(),
         discountsIOS = _extractDiscountIOS(json['discounts']),
         subscriptionOffersAndroid =
-            _extractSubscriptionOffersAndroid(json['subscriptionOffers']);
+        _extractSubscriptionOffersAndroid(json['subscriptionOffers']);
 
   /// wow, i find if i want to save a IAPItem, there is not "toJson" to cast it into String...
   /// i'm sorry to see that... so,
@@ -137,8 +139,8 @@ class IAPItem {
       discounts = list
           .map<DiscountIOS>(
             (dynamic discount) =>
-                DiscountIOS.fromJSON(discount as Map<String, dynamic>),
-          )
+            DiscountIOS.fromJSON(discount as Map<String, dynamic>),
+      )
           .toList();
     }
 
@@ -154,8 +156,8 @@ class IAPItem {
       offers = list
           .map<SubscriptionOfferAndroid>(
             (dynamic offer) => SubscriptionOfferAndroid.fromJSON(
-                offer as Map<String, dynamic>),
-          )
+            offer as Map<String, dynamic>),
+      )
           .toList();
     }
 
@@ -183,8 +185,8 @@ class SubscriptionOfferAndroid {
       phases = list
           .map<PricingPhaseAndroid>(
             (dynamic phase) =>
-                PricingPhaseAndroid.fromJSON(phase as Map<String, dynamic>),
-          )
+            PricingPhaseAndroid.fromJSON(phase as Map<String, dynamic>),
+      )
           .toList();
     }
 
@@ -285,13 +287,13 @@ class PurchasedItem {
         isAcknowledgedAndroid = json['isAcknowledgedAndroid'] as bool?,
         autoRenewingAndroid = json['autoRenewingAndroid'] as bool?,
         purchaseStateAndroid =
-            _decodePurchaseStateAndroid(json['purchaseStateAndroid'] as int?),
+        _decodePurchaseStateAndroid(json['purchaseStateAndroid'] as int?),
         originalTransactionDateIOS =
-            _extractDate(json['originalTransactionDateIOS']),
+        _extractDate(json['originalTransactionDateIOS']),
         originalTransactionIdentifierIOS =
-            json['originalTransactionIdentifierIOS'] as String?,
+        json['originalTransactionIdentifierIOS'] as String?,
         transactionStateIOS =
-            _decodeTransactionStateIOS(json['transactionStateIOS'] as int?);
+        _decodeTransactionStateIOS(json['transactionStateIOS'] as int?);
 
   /// This returns transaction dates in ISO 8601 format.
   @override
@@ -302,14 +304,14 @@ class PurchasedItem {
         'transactionReceipt: $transactionReceipt, '
         'purchaseToken: $purchaseToken, '
 
-        /// android specific
+    /// android specific
         'dataAndroid: $dataAndroid, '
         'signatureAndroid: $signatureAndroid, '
         'isAcknowledgedAndroid: $isAcknowledgedAndroid, '
         'autoRenewingAndroid: $autoRenewingAndroid, '
         'purchaseStateAndroid: $purchaseStateAndroid, '
 
-        /// ios specific
+    /// ios specific
         'originalTransactionDateIOS: ${originalTransactionDateIOS?.toIso8601String()}, '
         'originalTransactionIdentifierIOS: $originalTransactionIdentifierIOS, '
         'transactionStateIOS: $transactionStateIOS';
@@ -344,11 +346,11 @@ class PurchaseResult {
         message = json['message'] as String?;
 
   Map<String, dynamic> toJson() => {
-        "responseCode": responseCode ?? 0,
-        "debugMessage": debugMessage ?? '',
-        "code": code ?? '',
-        "message": message ?? '',
-      };
+    "responseCode": responseCode ?? 0,
+    "debugMessage": debugMessage ?? '',
+    "code": code ?? '',
+    "message": message ?? '',
+  };
 
   @override
   String toString() {
@@ -370,8 +372,8 @@ class ConnectionResult {
       : connected = json['connected'] as bool?;
 
   Map<String, dynamic> toJson() => {
-        "connected": connected ?? false,
-      };
+    "connected": connected ?? false,
+  };
 
   @override
   String toString() {
